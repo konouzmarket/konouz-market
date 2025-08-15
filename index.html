@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كنوز ماركت - متجرك الموثوق للأزياء والأناقة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        .cart-item { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .product-card:hover { transform: translateY(-5px); transition: all 0.3s ease; }
+        .announcement-bar { animation: scroll 20s linear infinite; }
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-amber-50 to-orange-50 min-h-screen">
+    <!-- شريط الإعلانات -->
+    <div class="bg-red-600 text-white py-2 overflow-hidden">
+        <div class="announcement-bar whitespace-nowrap">
+            🔥 عرض خاص: خصم 30% على جميع المنتجات - شحن مجاني للطلبات فوق 500 درهم - عرض محدود! 🔥
+        </div>
+    </div>
+
+    <!-- الهيدر -->
+    <header class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <h1 class="text-2xl font-bold text-amber-800">🛍️ كنوز ماركت</h1>
+                    <p class="text-gray-600 hidden md:block">متجرك الموثوق للأزياء والأناقة</p>
+                </div>
+                
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <a href="https://wa.me/212777604830" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 space-x-reverse transition-colors">
+                        <span>📱</span>
+                        <span>واتساب</span>
+                    </a>
+                    <button onclick="toggleCart()" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 space-x-reverse transition-colors">
+                        <span>🛒</span>
+                        <span>السلة (<span id="cart-count">0</span>)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- القسم الرئيسي -->
+    <section class="py-16 text-center">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4">مرحباً بك في كنوز ماركت</h2>
+            <p class="text-xl text-gray-600 mb-8">اكتشف أحدث المنتوجات بأفضل الأسعار</p>
+            <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" class="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors">
+                تسوق الآن
+            </button>
+        </div>
+    </section>
+
+    <!-- الفلاتر -->
+    <div class="container mx-auto px-4 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">الفئة:</label>
+                    <select id="category-filter" onchange="filterProducts()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500">
+                        <option value="all">جميع المنتجات</option>
+                        <option value="men">رجال</option>
+                        <option value="women">نساء</option>
+                        <option value="accessories">إكسسوارات</option>
+                        <option value="electronics">إلكترونيات</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">السعر:</label>
+                    <select id="price-filter" onchange="filterProducts()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500">
+                        <option value="all">جميع الأسعار</option>
+                        <option value="0-300">أقل من 300 درهم</option>
+                        <option value="300-600">300 - 600 درهم</option>
+                        <option value="600+">أكثر من 600 درهم</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- المنتجات -->
+    <section id="products" class="py-16">
+        <div class="container mx-auto px-4">
+            <h3 class="text-3xl font-bold text-center text-gray-800 mb-12">أحدث المنتوجات</h3>
+            <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- المنتجات ستظهر هنا -->
+            </div>
+        </div>
+    </section>
+
+    <!-- السلة -->
+    <div id="cart-sidebar" class="fixed top-0 left-0 h-full w-80 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50 overflow-y-auto">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold">سلة التسوق</h3>
+                <button onclick="toggleCart()" class="text-gray-500 hover:text-gray-700">✕</button>
+            </div>
+            <div id="cart-items" class="space-y-4 mb-6">
+                <!-- عناصر السلة ستظهر هنا -->
+            </div>
+            <div class="border-t pt-4">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-bold text-lg">المجموع:</span>
+                    <span id="cart-total" class="font-bold text-lg text-amber-600">0 درهم</span>
+                </div>
+                <button onclick="checkout()" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition-colors">
+                    إتمام الشراء عبر واتساب
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- الفوتر -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h4 class="text-xl font-bold mb-4">كنوز ماركت</h4>
+                    <p class="text-gray-300">متجرك الموثوق للأزياء والأناقة</p>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold mb-4">روابط سريعة</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-white">سياسة الإرجاع</a></li>
+                        <li><a href="#" class="hover:text-white">الشحن والتوصيل</a></li>
+                        <li><a href="#" class="hover:text-white">خدمة العملاء</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold mb-4">تواصل معنا</h4>
+                    <div class="space-y-2 text-gray-300">
+                        <p>📞 +212 777-604830</p>
+                        <p>📧 marketkonouz@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
+                <p>© 2024 كنوز ماركت - جميع الحقوق محفوظة</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // بيانات المنتجات
+        const products = [
+            {
+                id: 1,
+                name: "قميص أنيق",
+                price: 209,
+                originalPrice: 299,
+                image: "👔",
+                description: "قميص رجالي أنيق ومريح من القطن الخالص",
+                category: "men",
+                isOffer: true
+            },
+            {
+                id: 2,
+                name: "فستان صيفي",
+                price: 315,
+                originalPrice: 450,
+                image: "👗",
+                description: "فستان نسائي مثالي للصيف، خامة خفيفة ومريحة",
+                category: "women",
+                isOffer: true
+            },
+            {
+                id: 3,
+                name: "حذاء رياضي",
+                price: 419,
+                originalPrice: 599,
+                image: "👟",
+                description: "حذاء رياضي عصري ومريح للجري والأنشطة اليومية",
+                category: "men",
+                isOffer: true
+            },
+            {
+                id: 4,
+                name: "حقيبة يد",
+                price: 245,
+                originalPrice: 350,
+                image: "👜",
+                description: "حقيبة يد أنيقة وعملية من الجلد الطبيعي",
+                category: "accessories",
+                isOffer: true
+            },
+            {
+                id: 5,
+                name: "ساعة ذكية",
+                price: 629,
+                originalPrice: 899,
+                image: "⌚",
+                description: "ساعة ذكية بمواصفات متقدمة ومقاومة للماء",
+                category: "electronics",
+                isOffer: true
+            },
+            {
+                id: 6,
+                name: "نظارة شمسية",
+                price: 139,
+                originalPrice: 199,
+                image: "🕶️",
+                description: "نظارة شمسية عصرية بحماية UV400",
+                category: "accessories",
+                isOffer: true
+            },
+            {
+                id: 7,
+                name: "جاكيت شتوي",
+                price: 450,
+                originalPrice: 450,
+                image: "🧥",
+                description: "جاكيت شتوي دافئ ومقاوم للرياح",
+                category: "men",
+                isOffer: false
+            },
+            {
+                id: 8,
+                name: "بلوزة نسائية",
+                price: 180,
+                originalPrice: 180,
+                image: "👚",
+                description: "بلوزة نسائية أنيقة ومريحة للاستخدام اليومي",
+                category: "women",
+                isOffer: false
+            }
+        ];
+
+        let cart = [];
+        let filteredProducts = [...products];
+
+        // عرض المنتجات
+        function displayProducts(productsToShow = filteredProducts) {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = productsToShow.map(product => `
+                <div class="product-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300">
+                    <div class="p-6">
+                        <div class="text-6xl text-center mb-4">${product.image}</div>
+                        <h4 class="font-bold text-lg mb-2">${product.name}</h4>
+                        <p class="text-gray-600 text-sm mb-4">${product.description}</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <span class="text-2xl font-bold text-amber-600">${product.price} درهم</span>
+                                ${product.isOffer ? `<span class="text-sm text-gray-500 line-through mr-2">${product.originalPrice} درهم</span>` : ''}
+                            </div>
+                            ${product.isOffer ? '<span class="bg-red-500 text-white px-2 py-1 rounded text-xs">خصم 30%</span>' : ''}
+                        </div>
+                        <button onclick="addToCart(${product.id})" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-2 rounded-lg font-semibold transition-colors">
+                            أضف للسلة
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // فلترة المنتجات
+        function filterProducts() {
+            const categoryFilter = document.getElementById('category-filter').value;
+            const priceFilter = document.getElementById('price-filter').value;
+
+            filteredProducts = products.filter(product => {
+                const categoryMatch = categoryFilter === 'all' || product.category === categoryFilter;
+                
+                let priceMatch = true;
+                if (priceFilter === '0-300') {
+                    priceMatch = product.price < 300;
+                } else if (priceFilter === '300-600') {
+                    priceMatch = product.price >= 300 && product.price <= 600;
+                } else if (priceFilter === '600+') {
+                    priceMatch = product.price > 600;
+                }
+
+                return categoryMatch && priceMatch;
+            });
+
+            displayProducts(filteredProducts);
+        }
+
+        // إضافة للسلة
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+
+            updateCartDisplay();
+        }
+
+        // تحديث عرض السلة
+        function updateCartDisplay() {
+            const cartCount = document.getElementById('cart-count');
+            const cartItems = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            cartCount.textContent = totalItems;
+            cartTotal.textContent = totalPrice + ' درهم';
+
+            cartItems.innerHTML = cart.map(item => `
+                <div class="cart-item flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3 space-x-reverse">
+                        <span class="text-2xl">${item.image}</span>
+                        <div>
+                            <h5 class="font-semibold">${item.name}</h5>
+                            <p class="text-sm text-gray-600">${item.price} درهم × ${item.quantity}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2 space-x-reverse">
+                        <button onclick="changeQuantity(${item.id}, -1)" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center">-</button>
+                        <span class="font-semibold">${item.quantity}</span>
+                        <button onclick="changeQuantity(${item.id}, 1)" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center">+</button>
+                        <button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-700 mr-2">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // تغيير الكمية
+        function changeQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    updateCartDisplay();
+                }
+            }
+        }
+
+        // حذف من السلة
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartDisplay();
+        }
+
+        // تبديل السلة
+        function toggleCart() {
+            const sidebar = document.getElementById('cart-sidebar');
+            sidebar.classList.toggle('translate-x-full');
+        }
+
+        // إتمام الشراء
+        function checkout() {
+            if (cart.length === 0) {
+                alert('السلة فارغة!');
+                return;
+            }
+
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const orderDetails = cart.map(item => 
+                `${item.name} - الكمية: ${item.quantity} - السعر: ${item.price * item.quantity} درهم`
+            ).join('\n');
+
+            const message = `🛍️ *طلب جديد من كنوز ماركت*\n\n${orderDetails}\n\n💰 *المجموع الكلي: ${totalPrice} درهم*\n\n📦 *طريقة الدفع:* الدفع عند الاستلام\n\nأرجو تأكيد الطلب وإرسال تفاصيل الشحن.`;
+
+            const whatsappUrl = `https://wa.me/212777604830?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // تهيئة الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            displayProducts();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96fae249e1383d46',t:'MTc1NTI4Mzg5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
