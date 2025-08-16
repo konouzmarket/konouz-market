@@ -100,28 +100,38 @@
         </div>
     </section>
 
-    <!-- السلة -->
-    <div id="cart-sidebar" class="fixed top-0 left-0 h-full w-80 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50 overflow-y-auto">
-        <div class="p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold">سلة التسوق</h3>
-                <button onclick="toggleCart()" class="text-gray-500 hover:text-gray-700">✕</button>
+    <!-- طبقة overlay الشفافة خلف السلة -->
+    <div id="cart-overlay" onclick="toggleCart()" class="fixed inset-0 bg-black bg-opacity-40 z-40 hidden"></div>
+
+    <!-- السلة الجانبية العصرية -->
+    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-[350px] max-w-full bg-white/90 shadow-3xl transform translate-x-full transition-transform duration-300 z-50 overflow-y-auto backdrop-blur-xl rounded-l-3xl border-l border-amber-100">
+        <div class="flex flex-col h-full">
+            <!-- رأس السلة -->
+            <div class="flex items-center justify-between px-6 py-5 border-b border-amber-100 bg-white/80 rounded-tl-3xl">
+                <div class="flex items-center gap-2">
+                    <span class="text-3xl">🛒</span>
+                    <span class="font-bold text-xl text-amber-700">سلة التسوق</span>
+                </div>
+                <button onclick="toggleCart()" title="إغلاق" class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-red-200 text-gray-600 hover:text-red-600 text-2xl transition"><span>×</span></button>
             </div>
-            <div id="cart-items" class="space-y-4 mb-6">
+            <!-- عناصر السلة -->
+            <div id="cart-items" class="flex-1 px-6 py-4 space-y-4 overflow-y-auto">
                 <!-- عناصر السلة ستظهر هنا -->
             </div>
-            <div class="border-t pt-4">
-                <div class="flex justify-between items-center mb-4">
+            <!-- أسفل السلة -->
+            <div class="border-t border-amber-100 px-6 py-5 bg-white/80 rounded-bl-3xl">
+                <div class="flex items-center justify-between mb-4">
                     <span class="font-bold text-lg">المجموع:</span>
                     <span id="cart-total" class="font-bold text-lg text-amber-600">0 درهم</span>
                 </div>
-                <button onclick="checkout()" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition-colors">
-                    إتمام الشراء عبر واتساب
+                <button onclick="checkout()" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-xl font-semibold text-lg shadow-md transition-colors flex items-center justify-center gap-2">
+                    <span>إتمام الشراء عبر واتساب</span>
+                    <span class="text-2xl">💬</span>
                 </button>
             </div>
         </div>
     </div>
-
+    
     <!-- الفوتر -->
     <footer class="bg-gray-800 text-white py-12">
         <div class="container mx-auto px-4">
@@ -155,86 +165,14 @@
     <script>
         // بيانات المنتجات
         const products = [
-            {
-                id: 1,
-                name: "قميص أنيق",
-                price: 209,
-                originalPrice: 299,
-                image: "👔",
-                description: "قميص رجالي أنيق ومريح من القطن الخالص",
-                category: "men",
-                isOffer: true
-            },
-            {
-                id: 2,
-                name: "فستان صيفي",
-                price: 315,
-                originalPrice: 450,
-                image: "👗",
-                description: "فستان نسائي مثالي للصيف، خامة خفيفة ومريحة",
-                category: "women",
-                isOffer: true
-            },
-            {
-                id: 3,
-                name: "حذاء رياضي",
-                price: 419,
-                originalPrice: 599,
-                image: "👟",
-                description: "حذاء رياضي عصري ومريح للجري والأنشطة اليومية",
-                category: "men",
-                isOffer: true
-            },
-            {
-                id: 4,
-                name: "حقيبة يد",
-                price: 245,
-                originalPrice: 350,
-                image: "👜",
-                description: "حقيبة يد أنيقة وعملية من الجلد الطبيعي",
-                category: "accessories",
-                isOffer: true
-            },
-            {
-                id: 5,
-                name: "ساعة ذكية",
-                price: 629,
-                originalPrice: 899,
-                image: "⌚",
-                description: "ساعة ذكية بمواصفات متقدمة ومقاومة للماء",
-                category: "electronics",
-                isOffer: true
-            },
-            {
-                id: 6,
-                name: "نظارة شمسية",
-                price: 139,
-                originalPrice: 199,
-                image: "🕶️",
-                description: "نظارة شمسية عصرية بحماية UV400",
-                category: "accessories",
-                isOffer: true
-            },
-            {
-                id: 7,
-                name: "جاكيت شتوي",
-                price: 450,
-                originalPrice: 450,
-                image: "🧥",
-                description: "جاكيت شتوي دافئ ومقاوم للرياح",
-                category: "men",
-                isOffer: false
-            },
-            {
-                id: 8,
-                name: "بلوزة نسائية",
-                price: 180,
-                originalPrice: 180,
-                image: "👚",
-                description: "بلوزة نسائية أنيقة ومريحة للاستخدام اليومي",
-                category: "women",
-                isOffer: false
-            }
+            { id: 1, name: "قميص أنيق", price: 209, originalPrice: 299, image: "👔", description: "قميص رجالي أنيق ومريح من القطن الخالص", category: "men", isOffer: true },
+            { id: 2, name: "فستان صيفي", price: 315, originalPrice: 450, image: "👗", description: "فستان نسائي مثالي للصيف، خامة خفيفة ومريحة", category: "women", isOffer: true },
+            { id: 3, name: "حذاء رياضي", price: 419, originalPrice: 599, image: "👟", description: "حذاء رياضي عصري ومريح للجري والأنشطة اليومية", category: "men", isOffer: true },
+            { id: 4, name: "حقيبة يد", price: 245, originalPrice: 350, image: "👜", description: "حقيبة يد أنيقة وعملية من الجلد الطبيعي", category: "accessories", isOffer: true },
+            { id: 5, name: "ساعة ذكية", price: 629, originalPrice: 899, image: "⌚", description: "ساعة ذكية بمواصفات متقدمة ومقاومة للماء", category: "electronics", isOffer: true },
+            { id: 6, name: "نظارة شمسية", price: 139, originalPrice: 199, image: "🕶️", description: "نظارة شمسية عصرية بحماية UV400", category: "accessories", isOffer: true },
+            { id: 7, name: "جاكيت شتوي", price: 450, originalPrice: 450, image: "🧥", description: "جاكيت شتوي دافئ ومقاوم للرياح", category: "men", isOffer: false },
+            { id: 8, name: "بلوزة نسائية", price: 180, originalPrice: 180, image: "👚", description: "بلوزة نسائية أنيقة ومريحة للاستخدام اليومي", category: "women", isOffer: false }
         ];
 
         let cart = [];
@@ -313,20 +251,22 @@
             cartCount.textContent = totalItems;
             cartTotal.textContent = totalPrice + ' درهم';
 
-            cartItems.innerHTML = cart.map(item => `
-                <div class="cart-item flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div class="flex items-center space-x-3 space-x-reverse">
-                        <span class="text-2xl">${item.image}</span>
+            cartItems.innerHTML = cart.length === 0
+                ? '<div class="text-gray-400 text-center py-12 text-lg">السلة فارغة 🛒</div>'
+                : cart.map(item => `
+                <div class="cart-item flex items-center justify-between p-3 bg-gray-100/70 rounded-2xl shadow hover:shadow-md transition">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">${item.image}</span>
                         <div>
-                            <h5 class="font-semibold">${item.name}</h5>
-                            <p class="text-sm text-gray-600">${item.price} درهم × ${item.quantity}</p>
+                            <h5 class="font-semibold text-md">${item.name}</h5>
+                            <p class="text-sm text-gray-500">${item.price} درهم × ${item.quantity}</p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-2 space-x-reverse">
-                        <button onclick="changeQuantity(${item.id}, -1)" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center">-</button>
-                        <span class="font-semibold">${item.quantity}</span>
-                        <button onclick="changeQuantity(${item.id}, 1)" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center">+</button>
-                        <button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-700 mr-2">🗑️</button>
+                    <div class="flex items-center gap-1">
+                        <button onclick="changeQuantity(${item.id}, -1)" class="bg-gray-200 hover:bg-gray-300 w-9 h-9 rounded-full flex items-center justify-center text-xl font-bold transition">-</button>
+                        <span class="font-semibold text-lg mx-2">${item.quantity}</span>
+                        <button onclick="changeQuantity(${item.id}, 1)" class="bg-gray-200 hover:bg-gray-300 w-9 h-9 rounded-full flex items-center justify-center text-xl font-bold transition">+</button>
+                        <button onclick="removeFromCart(${item.id})" title="حذف" class="ml-2 text-red-500 hover:text-red-700 text-xl transition">🗑️</button>
                     </div>
                 </div>
             `).join('');
@@ -351,10 +291,12 @@
             updateCartDisplay();
         }
 
-        // تبديل السلة
+        // تبديل السلة والطبقة السوداء (يمين)
         function toggleCart() {
             const sidebar = document.getElementById('cart-sidebar');
+            const overlay = document.getElementById('cart-overlay');
             sidebar.classList.toggle('translate-x-full');
+            overlay.classList.toggle('hidden');
         }
 
         // إتمام الشراء
@@ -380,5 +322,5 @@
             displayProducts();
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96fae249e1383d46',t:'MTc1NTI4Mzg5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
